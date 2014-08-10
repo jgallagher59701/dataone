@@ -131,7 +131,12 @@ Once you have edited this file, make a copy of it someplace safe since the file 
 <h2>
 <a name="optimizations" class="anchor" href="#optimizations"><span class="octicon octicon-link"></span></a>Optimizations</h2>
 
-<p>From the preceding description, it should be clear that one optimization for the server would be to cache the ISO-19115 metadata document, either in the database or using a separate cache tool like the Java Caching System (JCS). This would speed up the response for these objects. Similarly, if sufficient memory is available for a server, caching the SDO would also</p>
+<p>From the preceding description, it should be clear that one optimization for the server would be to cache the ISO-19115 metadata document, either in the database or using a separate cache tool like the Java Caching System (JCS). This would speed up the response for these objects. Similarly, if sufficient memory is available for a server, caching the SDO would also boost performance, although this would likely be a real cache in the sense that old items would be pushed out to make room for newer or more frequently requested things. The current 'caching' of the ORE documents stores all of them permanently.</p>
+
+<p>There are some quirks to the server's design that could be addressed, and while not really optimizations, doing these things would improve performance. First, the servlet and the database are loosely coupled, normally that's a good thing but in this case it can lead to some odd behavior. In particular, the server has a single server set at the 'DAP server' with the implication that all data are served from that one site. However, there's no limitation on the number of different sites can be in the database. In fact, the database has no notion of sites at all; it simply holds URLs without considering where they will read data from. The 'ping' function will use the 'DAP server' named in the configuration parameter, however. SO if ping returns, the client knows that the DAP server named by that parameter is working. </p>
+
+<h2>
+<a name="limitations" class="anchor" href="#limitations"><span class="octicon octicon-link"></span></a>Limitations</h2>
       </section>
     </div>
 
