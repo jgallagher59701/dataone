@@ -118,7 +118,20 @@ Once you have edited this file, make a copy of it someplace safe since the file 
 <h3>
 <a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How it works</h3>
 
-<p>The server stores information about each dataset in a simple RDB. </p>
+<p>The server uses two characteristics of many DAP implementations to provide two of the three most important responses of the DataONE Tier 1 Member Node: The Science Data Object (SDO) and Science Metadata Object (SMO). DAP servers often provide a way to access data packages in a netCDF3 (or 4) file - regardless of how the data are originally stored. Thus the DAP-DataONE server is designed to always return the SDO as a netCDF3 file. The original data might have been stored in a RDB, or a HDF4 File, but the return format from the DAP-DataONE server will always be as a netCDF3 file. The SMO - a metadata object that matches the SDO - is built using many DAP server's ability to build ISO-19115 documents that describe any given dataset. Lastly, the ORE document, the third primary DataONE response, is built using the URLs for the SDO and SMO. </p>
+
+<p>The DAP URL to the dataset is used to build the URLs that are used to access the SDO and SMO from the DAP server. For each dataset that the DAP server holds, there is one base URL and from the base URL there is one URL that will return a netCDF3 file that holds all of it s data (the SDO) and one URL that will return the ISO-19115 document (the SMO).</p>
+
+<p>However, DataONE requires other information about any given dataset. For each of the SDO, SMO and ORE responses, DataONE specifies a set of 'system metadata' that must also be made available by a DataONE server. This information includes a Persistent Identifier (PID) that is used to access the response, the size and checksum of the response as well as other metadata. The DAP-DataONE server uses a relational database to store this information.</p>
+
+<p>The DAP-DataONE server uses SQLite (although it will be trivial to substitute a different database engine like MySQL) to store the metadata, PIDs, and other information including the ORE documents. This information is accessed and used to build every response <strong>except</strong> the SDO and SMO responses. The SDO and SMO responses are read from the DAP server, not the relational database. The <a href="https://github.com/jgallagher59701/DAPD1DatasetsDatabase">DAPD1DatasetsDatabase</a> project web page contains information about the tables in the current implementation of the datasets database. </p>
+
+<p>The DataONE server also uses the RDB to store access information. Information about every SDO or SMO request is stored in a table and can be queried using the DataONE 'log' function.</p>
+
+<h2>
+<a name="optimizations" class="anchor" href="#optimizations"><span class="octicon octicon-link"></span></a>Optimizations</h2>
+
+<p>From the preceding description, it should be clear that one optimization for the server would be to cache the ISO-19115 metadata document, either in the database or using a separate cache tool like the Java Caching System (JCS). This would speed up the response for these objects. Similarly, if sufficient memory is available for a server, caching the SDO would also</p>
       </section>
     </div>
 
