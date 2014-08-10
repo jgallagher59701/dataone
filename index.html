@@ -31,37 +31,94 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="welcome-to-the-dap-dataone-server-documentation" class="anchor" href="#welcome-to-the-dap-dataone-server-documentation"><span class="octicon octicon-link"></span></a>Welcome to the DAP-DataONE server documentation</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>The DAP-DataONE server is an implementation of a DataONE version 1, tier 1 Member Node. It is designed to act as a kind of broker for DataONE clients and data served using OPeNDAP. The initial version of the server only supports DAP2 but will work with any DAP server that can return data packaged in netCDF3 files and can return ISO-19115 metadata documents for those datasets. The server is implemented as a Java Servlet that contains the implementation of the DataONE Member Node protocol and a simple database paired with a command-line to add or update datasets in the database. The database uses SQLite, although all of the software interacts with it using JDBC, so a different RDB could be used with only very trivial modifications to the software.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<h2>
+<a name="whats-here-in-the-documentation" class="anchor" href="#whats-here-in-the-documentation"><span class="octicon octicon-link"></span></a>What's here in the documentation?</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>The documentation contains information about how to:
+1. Beta software
+1. Build the software from source
+1. Test the software using a preconfigured database
+1. Serving your own data</p>
+
+<p>In addition, there is documentation that discusses ways the server could be made more powerful and limitations imposed by the designs of DAP2 and DataONE:
+1. How it works
+1. Optimizations
+1. Limitations</p>
+
+<h2>
+<a name="beta-software-what-we-assume" class="anchor" href="#beta-software-what-we-assume"><span class="octicon octicon-link"></span></a>Beta software; What we assume</h2>
+
+<p>This is beta software without a polished build/install process. We assume you are computer savvy and know how to configure systems, install software, start and stop web servers, ..., all that stuff. If you want to use this software but are unsure about these kinds of things, contact us at <a href="mailto:support@opendap.org">support@opendap.org</a> or <a href="https://www.dataone.org/contact">DataONE:Contact</a>.</p>
+
+<h2>
+<a name="build-the-software" class="anchor" href="#build-the-software"><span class="octicon octicon-link"></span></a>Build the software</h2>
+
+<p>This project and its companion, DAPD1DatasetsDatabase, use Maven. </p>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="get-maven-if-you-do-not-already-have-it" class="anchor" href="#get-maven-if-you-do-not-already-have-it"><span class="octicon octicon-link"></span></a>Get Maven if you do not already have it</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Goto <a href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a>, get the binary and install it. On a Mac OSX machine, put the <code>apache-maven-&lt;ver&gt;</code> directory in <code>/Applications</code>. Then add</p>
+
+<ul>
+<li>export M2_HOME=/Applications/apache-maven-3.1.1</li>
+<li>export PATH=$PATH:$M2_HOME/bin
+to <code>.bashrc</code> or the equivalent. <code>mvn --version</code> should work and return the expected info.</li>
+</ul><h3>
+<a name="build-the-code" class="anchor" href="#build-the-code"><span class="octicon octicon-link"></span></a>Build the code</h3>
+
+<p>Use git to <code>clone</code> the <a href="https://github.com/jgallagher59701/DAPD1DatasetsDatabase">DAPD1DatasetsDatabase</a> and DAPD1Servlet projects (hosted here on GitHub). It's best to store them in the same directory even though they are completely separate projects. For the DAPD1DatasetsDatabase, build it using <code>mvn clean install</code>. This will build the executable jar file run by the edit-db.sh bash shell script and install that in the local maven repository so it can be found by the DAPD1Servlet build. To build the DAPD1Servlet code, use <code>mvn clean package</code>. This will build a <code>war</code> file that can be installed in tomcat's <code>webapps</code> subdirectory. If there's a significant demand, we can make binaries available.</p>
+
+<p>Note:</p>
+
+<blockquote>
+<p>I use Eclipse with the Maven plugin (<a href="http://download.eclipse.org/technology/m2e/releases">m2e</a>). Once the code is checked out &gt; using <code>git clone</code>, then use Eclipse:File:Import... and choose Git-&gt;Existing local repository and select the 'import as general &gt; project' option. In the project, Right click on the <code>pox.xml</code> file and choose Run As... to build.</p>
+</blockquote>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="configure-and-test-the-server" class="anchor" href="#configure-and-test-the-server"><span class="octicon octicon-link"></span></a>Configure and Test the Server</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>To install the server, you'll need an instance of Tomcat. Copy the <code>target/DAPD1Servlet.war</code> to Tomcat's <code>webapps</code> directory. Start Tomcat and then ten stop it. This little gyration will make a default 'opendap.properties' file that you can then edit. Look in <code>$CATALINA_HOME/webapps/DAPD1Servlet/WEB-INF/classes/</code> for that file and edit it as follows:</p>
+
+<ul>
+<li>
+<code>org.opendap.d1.serviceName = http://&lt;host&gt;:&lt;port&gt;/DAPD1Servlet/d1</code> where <code>&lt;host&gt;</code> and <code>&lt;port&gt;</code> match where you are running Tomcat.</li>
+<li>org.opendap.d1.DatabaseName = <code>&lt;path to the database&gt;</code>. In the DAPD1DatasetsDatabase project there is a test database named <code>test.db</code> that you can use for testing. Once you know the server's working, you'll need to build your own database and change this parameter value to reference it.</li>
+<li>org.opendap.d1.nodeName = <code>&lt;DAP server host name&gt;</code>, e.g., <code>test.opendap.org</code>. This is the DAP server that will be tested by the <code>ping</code> function. Note that the DAPD1DatasetsDatabase doesn't enforce that this is the only DAP server used, but it should be that case that the database holds only DAP datasets served by this host. For now, we're using the honor system ;-)</li>
+<li>org.opendap.d1.nodeId = <code>&lt;URN for the node&gt;</code>, e.g., urn:node:test_opendap_org. This cannot use dots.</li>
+<li>org.opendap.d1.subject = <code>public</code> Currently only 'public' access is supported</li>
+<li>org.opendap.d1.contactSubject = <code>&lt;contact information</code>, e.g., <code>CN=James Gallagher,O=OPeNDAP,C=US</code>
+</li>
+<li>org.opendap.d1.nodeDescription = <code>&lt;Text description&gt;</code>, e.g., <code>This node contains test data.</code>
+Once you have edited this file, make a copy of it someplace safe since the file will be overwritten if the <code>war</code> file is updated and you'd loose all your configuration information.</li>
+</ul><p>Start tomcat. If the <code>test.db</code> database is correctly referenced by the <code>org.opendap.d1.DatabaseName</code> option, the servlet should start without errors. Look in Tomcat's <code>catalina.out</code> log file to verify that is has started without error. If there are errors, edit the <code>logback.xml</code> file in the ... and set the log level to <code>DEBUG</code> in the logger named "org.opendap.d1". Also note that the servlet writes log messages to a log file named 'opendap.log'.</p>
+
+<p>Assuming Tomcat and the Servlet start without errors, try these URLs (I'll use <code>localhost:8080</code> for the host and port):</p>
+
+<ul>
+<li>Test the <code>ping</code> function: http://localhost:8080/DAPD1Servlet/d1/mn/v1/monitor/ping. This should return the time of the ping, but it may take a few seconds since it will test to see that your DAP server is really responding.</li>
+<li>Look at the objects: http://localhost:8080/DAPD1Servlet/d1/mn/v1/object.</li>
+<li>Look at the information for a given PID: http://localhost:8080/DAPD1Servlet/d1/mn/v1/object/...</li>
+<li>Look at that PID's metadata: http://localhost:8080/DAPD1Servlet/d1/mn/v1/meta/...</li>
+</ul><h3>
+<a name="serving-your-own-data" class="anchor" href="#serving-your-own-data"><span class="octicon octicon-link"></span></a>Serving your own data</h3>
+
+<p>See the information about adding and updating datasets in the database over in the <a href="https://github.io/jgallagher59701/DAPD1DatasetsDatabase">DAPD1DatasetsDatabase project</a>. Once this database has been built, copy it to a safe place and edit the <code>org.opendap.d1.DatabaseName</code> parameter so that it references it. Restart the servlet, check for errors and test.</p>
+
+<h2>
+<a name="about-the-design-potential-optimizations-and-its-current-limitations" class="anchor" href="#about-the-design-potential-optimizations-and-its-current-limitations"><span class="octicon octicon-link"></span></a>About the design, potential optimizations and its current limitations</h2>
+
+<p>This is the first attempt at a broker (using the term loosely) for DAP and DataONE and was written quickly. The DataONE Java libraries along with an example servlet made the process go quite fast (about 5 weeks total development time). However, there are significant differences in some of the goals of the DAP and DataONE technologies and those differences are the subject of this section. Fundamentally, DAP is a <strong>protocol</strong> for data access and subsetting while DataONE is a <strong>system</strong> that provides a complete solution to a range of activities important to users of online data. This difference means that DataONE provides one or more solutions to a range of problems (data persistance, location, etc.) in addition to data access. In many ways that is what makes combining the two so interesting. With that in mind...</p>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How it works</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>The server stores information about each dataset in a simple RDB. </p>
       </section>
     </div>
 
